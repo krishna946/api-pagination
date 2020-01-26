@@ -1,0 +1,63 @@
+<div class="container mt-3">
+    <div class="row">
+        <div class="d-flex align-content-start flex-wrap">
+            <ng-container *ngFor="let data of pagedItems">
+                <div class="d-flex flex-wrap rounded col-sm-3 p-4 img-hover-zoom img-data">
+                    <img class="rounded main-img" height="200px" width="100%" src="{{data.download_url}}" />
+                    <div class="col-sm-12 text-center">
+                        <button class="btn btn-md btn-secondary text-center view-btn" data-toggle="modal"
+                            data-target="#exampleModalCenter" data-toggle="modal" data-target="#exampleModal"
+                            (click)="showBtn=data.id">View Details</button>
+
+                        <!-- Modal -->
+                        <div *ngIf="showBtn===data.id" class="modal fade m-auto" id="exampleModal" tabindex="-1"
+                            role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header border-0">
+
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="container-fluid">
+                                            <div class="row">
+                                                <div class="col-md-10 m-auto">
+                                                    <img class="rounded" width="100%" src="{{data.download_url}}" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer border-0">
+                                        <a href="data.download_url" download="data.download_url"
+                                            class="btn btn-primary">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</div>
+<div class="d-flex justify-content-center">
+
+    <!-- items being paged
+            <div *ngFor="let item of pagedItems">{{item.name}}</div> -->
+
+    <!-- pager -->
+    <ul *ngIf="pager.pages && pager.pages.length" class="pagination">
+
+        <li [ngClass]="{disabled:pager.currentPage === 1}">
+            <a (click)="setPage(pager.currentPage - 1)">Previous</a>
+        </li>
+        <li *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage === page}">
+            <a (click)="setPage(page)">{{page}}</a>
+        </li>
+        <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+            <a (click)="setPage(pager.currentPage + 1)">Next</a>
+        </li>
+    </ul>
+</div>

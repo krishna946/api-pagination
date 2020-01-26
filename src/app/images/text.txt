@@ -1,0 +1,170 @@
+import { Component, OnInit } from '@angular/core';
+import { ImageResponsceService } from '../image-responsce.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import 'rxjs/add/operator/switchMap';
+import 'rxjs/add/operator/map';
+import { Observable, Subject } from 'rxjs';
+import { PagerService } from '../pager.service';
+import { HttpClient } from '@angular/common/http';
+
+@Component({
+  selector: 'app-images',
+  templateUrl: './images.component.html',
+  styleUrls: ['./images.component.css']
+})
+export class ImagesComponent implements OnInit {
+  data:any;
+  downdata: any;
+  constructor(private service:ImageResponsceService, private pagerService: PagerService,private http:HttpClient) { }
+  // array of all items to be paged
+  private allItems=[];
+
+  // pager object
+  pager: any = {};
+
+  // paged items
+  pagedItems: any[];
+i = 1;
+  ngOnInit() {
+
+    this.service.getImages(this.i).subscribe(
+      (res:any)=>{
+        this.allItems = res;
+        console.log(res);
+        this.setPage(1);
+      }
+    );
+  }
+
+  setPage(page: number) {
+   // console.log(page)
+    // get pager object from service
+    this.pager = this.pagerService.getPager(this.allItems.length, page);
+
+    // get current page of items
+    this.pagedItems = this.allItems.slice(this.pager.startIndex, this.pager.endIndex + 1);
+
+  }
+
+  
+  
+nextFunc(){
+
+//data++
+var inc = ++this.i;
+console.log(inc);
+  var datas=this.http.get("https://picsum.photos/v2/list?page="+inc);
+  datas.subscribe((res:any)=>{
+   // console.log(res);
+    this.allItems = res;
+        this.setPage(1);
+
+
+
+  });
+ 
+  // this.service.getImagesPrevious(data++).subscribe((res:any)=>{
+  //   this.allItems = res;
+  //   console.log(this.nextArraydata);
+  //   //this.allItems.concat(this.nextArraydata)
+  //   // used for concat this.allItems = [...this.allItems,...this.nextArraydata]; 
+
+  //   console.log(this.allItems);
+
+  //   this.setPage(1);
+
+
+  // })
+
+
+
+}
+previousFunc(){
+  console.log(this.i--);
+  console.log("previuoes")
+  this.service.getImages(this.i--).subscribe((res:any)=>{
+    this.allItems = res;
+    this.setPage(1);
+
+    console.log(this.allItems);
+    // this.setPage(1);
+  })
+
+
+
+}
+
+}
+
+
+<div class="container mt-3">
+    <div class="row">
+        <div class="d-flex align-content-start flex-wrap">
+            <ng-container *ngFor="let data of pagedItems ; index as i">
+                <div class="d-flex flex-wrap rounded col-sm-3 p-2 main-img img-hover-zoom">
+                    <img class="rounded" height="200px" width="100%" src="{{data.download_url}}" />
+                    <div class="col-sm-12 text-center view-btn">
+                        <button class="btn btn-sm btn-secondary text-center" data-toggle="modal"
+                            data-target="#exampleModalCenter" data-toggle="modal" data-target="#exampleModal"
+                            (click)="showBtn=data.id">View Details</button>
+
+                        <!-- Modal -->
+                        <div *ngIf="showBtn===data.id" class="modal modal-xl fade m-auto" id="exampleModal" tabindex="-1"
+                            role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="container-fluid">
+                                            <div class="row">
+                                                <div >
+                                                    <img class="rounded"  width="100%"
+                                                        src="{{data.download_url}}" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <a  class="btn btn-primary" href="{{data.url}}"   target="_blank">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</div>
+<div>
+    <div class="container">
+        <div class="text-center">
+
+            <!-- items being paged -->
+
+            <!-- pager -->
+            <ul *ngIf="pager.pages && pager.pages.length" class="pagination">
+                <li [ngClass]="{disabled:pager.currentPage === 1}">
+                    <a (click)="setPage(1)">First</a>
+                </li>
+                <li >
+                    <a (click)="setPage(pager.currentPage - 1);previousFunc()">Previous</a>
+                </li>
+                <li *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage === page}">
+                    <a (click)="setPage(page)">{{page}}</a>
+                </li>
+                <li>
+                    <a (click)="setPage(pager.currentPage + 1);nextFunc()">Next</a>
+                </li>
+                <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+                    <a (click)="setPage(pager.totalPages)">Last</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

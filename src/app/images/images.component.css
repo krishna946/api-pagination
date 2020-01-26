@@ -1,0 +1,45 @@
+a {
+    cursor: pointer;
+}
+.modal-lg {
+    max-width: 70% !important;
+}
+.img-data {
+    position: relative;
+}
+.view-btn {
+    position: absolute;
+    opacity: 0;
+    right: 90px;
+    bottom: 20px;
+}
+.img-data:hover .view-btn {
+    opacity: 1;
+}
+/* [1] The container */
+.img-hover-zoom {
+    height: 300px; /* [1.1] Set it as per your need */
+    overflow: hidden; /* [1.2] Hide the overflowing of child elements */
+  }
+  
+  /* [2] Transition property for smooth transformation of images */
+  .img-hover-zoom .main-img {
+    transition: transform .5s ease;
+  }
+  
+  /* [3] Finally, transforming the image when container gets hovered */
+  .img-hover-zoom:hover .main-img  {
+    transform: scale(1.1);
+  }
+/* Brightness-zoom Container */
+.img-hover-zoom--brightness .main-img {
+    transition: transform 2s, filter 1.5s ease-in-out;
+    transform-origin: center center;
+    filter: brightness(50%);
+  }
+  
+  /* The Transformation */
+  .img-hover-zoom--brightness:hover .main-img {
+    filter: brightness(100%);
+    transform: scale(1.2);
+  }
